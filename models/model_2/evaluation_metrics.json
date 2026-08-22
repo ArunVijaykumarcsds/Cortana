@@ -1,0 +1,18 @@
+{
+    "model": "CORTANA Model 2 \u2014 Isolation Forest",
+    "precision": 0.28515625,
+    "recall": 0.5367647058823529,
+    "f1_score": 0.37244897959183676,
+    "roc_auc": 0.9595797255449005,
+    "pr_auc": 0.3105474488709207,
+    "true_positives": 73,
+    "false_positives": 183,
+    "true_negatives": 85124,
+    "false_negatives": 63,
+    "fraud_detected": 73,
+    "fraud_total": 136,
+    "anomaly_percentage": 0.3,
+    "anomalies_flagged": 256,
+    "test_samples": 85443,
+    "methodology_note": "Final configuration and operating threshold were selected using a validation set. An earlier exploratory hyperparameter experiment used the test set; therefore the final test result should be treated as confirmatory rather than a completely virgin holdout evaluation."
+}

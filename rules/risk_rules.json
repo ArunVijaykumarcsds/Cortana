@@ -1,0 +1,38 @@
+[
+    {
+        "rule_key": "HIGH_AMOUNT",
+        "description": "Transaction amount is unusually high",
+        "weight": 0.2,
+        "enabled": true
+    },
+    {
+        "rule_key": "ORIGIN_BALANCE_INCONSISTENCY",
+        "description": "Origin account balance changed inconsistently with transaction",
+        "weight": 0.2,
+        "enabled": true
+    },
+    {
+        "rule_key": "DESTINATION_BALANCE_INCONSISTENCY",
+        "description": "Destination account balance changed inconsistently with transaction",
+        "weight": 0.15,
+        "enabled": true
+    },
+    {
+        "rule_key": "LARGE_BALANCE_CHANGE",
+        "description": "Transaction represents a large change relative to origin balance",
+        "weight": 0.15,
+        "enabled": true
+    },
+    {
+        "rule_key": "HIGH_RISK_TRANSACTION_TYPE",
+        "description": "Transaction type is CASH_OUT or TRANSFER",
+        "weight": 0.15,
+        "enabled": true
+    },
+    {
+        "rule_key": "ZERO_BALANCE_ANOMALY",
+        "description": "Transaction leaves an unusual zero-balance condition",
+        "weight": 0.1,
+        "enabled": true
+    }
+]

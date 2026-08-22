@@ -1,0 +1,46 @@
+{
+    "engine": "CORTANA Risk Fusion Engine",
+    "weights": {
+        "model_1": 0.8,
+        "model_2": 0.1,
+        "rules": 0.1
+    },
+    "decision_threshold": 0.98,
+    "risk_levels": {
+        "LOW": [
+            0.0,
+            0.25
+        ],
+        "MEDIUM": [
+            0.25,
+            0.5
+        ],
+        "HIGH": [
+            0.5,
+            0.75
+        ],
+        "CRITICAL": [
+            0.75,
+            1.0
+        ]
+    },
+    "datasets": {
+        "model_1": "PaySim",
+        "rules": "PaySim",
+        "model_2": "ULB"
+    },
+    "architecture": {
+        "paysim": [
+            "model_1",
+            "rules"
+        ],
+        "ulb": [
+            "model_2"
+        ],
+        "cross_dataset_pairing": false
+    },
+    "calibration": {
+        "method": "percentile_rank",
+        "direction": "higher_is_riskier"
+    }
+}

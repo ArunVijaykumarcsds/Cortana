@@ -1,0 +1,22 @@
+{
+    "experiment": "Step 21 \u2014 Final CORTANA Test Evaluation",
+    "dataset": "PaySim",
+    "test_rows": 177268,
+    "threshold": 0.98,
+    "precision": 0.27325581395348836,
+    "recall": 0.9494949494949495,
+    "f1": 0.42437923250564336,
+    "roc_auc": 0.9977102271408838,
+    "pr_auc": 0.5870652778184527,
+    "true_positives": 94,
+    "false_positives": 250,
+    "true_negatives": 176919,
+    "false_negatives": 5,
+    "known_fraud": 99,
+    "fraud_detected": 94,
+    "fraud_detection_rate": 0.9494949494949495,
+    "reviewed_transactions": 344,
+    "review_rate": 0.0019405645689013246,
+    "test_set_tuned": false,
+    "threshold_source": "PaySim validation set \u2014 Step 20"
+}

@@ -1,0 +1,18 @@
+{
+    "threshold_type": "rank_based",
+    "anomaly_percentage": 0.3,
+    "validation_selection": {
+        "precision": 0.2941,
+        "recall": 0.5072,
+        "f1": 0.3723,
+        "true_positives": 35,
+        "false_positives": 84,
+        "false_negatives": 34
+    },
+    "final_test": {
+        "precision": 0.28515625,
+        "recall": 0.5367647058823529,
+        "f1": 0.37244897959183676
+    },
+    "explanation": "Transactions within the top 0.30 percent of anomaly scores are flagged by Model 2 as anomalous."
+}

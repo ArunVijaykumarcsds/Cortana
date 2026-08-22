@@ -1,0 +1,74 @@
+{
+    "README.md": {
+        "sha256": "a9fd7b63b60a885d4a60f412ad69c3d19ac25364908fe1c22dd872b6296c2b0e",
+        "size_bytes": 1162
+    },
+    "VERSION.json": {
+        "sha256": "9af9f62cc78c504fad146185d6807a40983ccb14d5f96b951d0e48f0dc603b8f",
+        "size_bytes": 1516
+    },
+    "documentation/architecture.md": {
+        "sha256": "9b8d6e079209592a3f06a96245b1c422a4fd6ae08037fbb95fd34fbf22c88e86",
+        "size_bytes": 1021
+    },
+    "evaluation/final_model_comparison.csv": {
+        "sha256": "c15bf414a20898ee8b7509fd1d7b14e178595765036761ce4ba8865276d54e99",
+        "size_bytes": 357
+    },
+    "evaluation/final_test_results.json": {
+        "sha256": "5a5a207023e1ace8bec1d2de3f676b1ed2cd81f5f931569b9b90358d89cafaaa",
+        "size_bytes": 689
+    },
+    "evaluation/step19_paysim_evaluation.json": {
+        "sha256": "a968c81b8440e1d1b59885f978d502f21f444b063614c36354b262447ef20725",
+        "size_bytes": 948
+    },
+    "fusion/calibration/model1_calibration.csv": {
+        "sha256": "480aa716b99658d7287b152728c7bc56f1f0380b4c63a3ec9fa2ccf80a33e762",
+        "size_bytes": 3658045
+    },
+    "fusion/calibration/model2_calibration.csv": {
+        "sha256": "619301eacdfdadcff677af34d592bd82060e6ecd193b0d5bed3eb2f55d9fa7eb",
+        "size_bytes": 1673800
+    },
+    "fusion/calibration/rules_calibration.csv": {
+        "sha256": "fd2079d29ebb2801632f53763ad6aba430aa076ce76434bfb88e7a6232263c06",
+        "size_bytes": 3723848
+    },
+    "fusion/fusion_config.json": {
+        "sha256": "da1b5a7b1ed4e135b74ec695cd8ef7e39d3603ec1fad98e03aa135c8114cf937",
+        "size_bytes": 859
+    },
+    "models/model_1/cortana_model_1_random_forest.pkl": {
+        "sha256": "4a6bc69cdcbe941cf651f621a10e98ac27315aa07e8e7578c14f532351532a7a",
+        "size_bytes": 2157897
+    },
+    "models/model_1/model_config.json": {
+        "sha256": "4ac043e4e4439025c7628ca2bff74a5f53be084364c54d18d1457d5aeac9ef90",
+        "size_bytes": 244
+    },
+    "models/model_2/cortana_model_2_isolation_forest.pkl": {
+        "sha256": "3690dc88bdbdeef9b226732b54dbdb9454bd09c7064627791d41a919d5955f6d",
+        "size_bytes": 42224173
+    },
+    "models/model_2/evaluation_metrics.json": {
+        "sha256": "e7b59dd3490a5ecea40b480dd0fdf850ef06b870c66c532542de95256e224721",
+        "size_bytes": 770
+    },
+    "models/model_2/feature_columns.json": {
+        "sha256": "299fb0782913f99b074f0f697432089301075098069c97f179cef835e251b4e2",
+        "size_bytes": 327
+    },
+    "models/model_2/model_config.json": {
+        "sha256": "8097e5c63bac51f725cbcdaf10fa71446f33ad2c02b776ca969bae42a9fb4671",
+        "size_bytes": 1122
+    },
+    "models/model_2/threshold_config.json": {
+        "sha256": "cf032c31a980bf1d713603b7a4b21f4a7ce53eac03ef5f6fde9d2dfcced089b8",
+        "size_bytes": 524
+    },
+    "rules/risk_rules.json": {
+        "sha256": "23a16e981ece2c0a886812af9a942fa323f9ffab9e6b282de568a0c0be8e6ad5",
+        "size_bytes": 1130
+    }
+}

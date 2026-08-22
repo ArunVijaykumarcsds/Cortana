@@ -1,0 +1,55 @@
+{
+    "project": "CORTANA",
+    "release_name": "CORTANA_FINAL_v1.0.0",
+    "version": "1.0.0",
+    "phase": "Phase 6",
+    "release_type": "Final",
+    "created_utc": "2026-08-21T10:06:31.351681+00:00",
+    "architecture": {
+        "model_1": {
+            "dataset": "PaySim",
+            "type": "RandomForestClassifier",
+            "signal": "fraud_probability",
+            "weight": 0.8
+        },
+        "model_2": {
+            "dataset": "ULB",
+            "type": "IsolationForest",
+            "signal": "anomaly_score",
+            "weight": 0.1
+        },
+        "rules": {
+            "dataset": "PaySim",
+            "type": "behavioral_rules",
+            "rule_count": 6,
+            "weight": 0.1
+        }
+    },
+    "fusion": {
+        "weights_sum": 1.0,
+        "decision_threshold": 0.98,
+        "cross_dataset_row_pairing": false
+    },
+    "validation": {
+        "step_21_final_test": true,
+        "step_22_system_validation": true,
+        "step_23_reproducibility": true,
+        "step_24_packaging_precheck": true,
+        "step_25_final_packaging": true,
+        "step_26_package_smoke_test": true
+    },
+    "final_test_metrics": {
+        "precision": 0.273256,
+        "recall": 0.949495,
+        "f1": 0.424379,
+        "roc_auc": 0.99771,
+        "pr_auc": 0.587065
+    },
+    "final_confusion_matrix": {
+        "true_negatives": 176919,
+        "false_positives": 250,
+        "false_negatives": 5,
+        "true_positives": 94
+    },
+    "fraud_detection_rate": 0.949495
+}

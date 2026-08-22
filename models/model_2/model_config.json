@@ -1,0 +1,57 @@
+{
+    "model_name": "CORTANA Model 2",
+    "algorithm": "Isolation Forest",
+    "learning_type": "Unsupervised Anomaly Detection",
+    "n_estimators": 200,
+    "max_samples": 0.75,
+    "max_features": 1.0,
+    "contamination": "auto",
+    "random_state": 42,
+    "operating_policy": {
+        "type": "rank_based",
+        "anomaly_percentage": 0.3
+    },
+    "features": [
+        "Time",
+        "V1",
+        "V2",
+        "V3",
+        "V4",
+        "V5",
+        "V6",
+        "V7",
+        "V8",
+        "V9",
+        "V10",
+        "V11",
+        "V12",
+        "V13",
+        "V14",
+        "V15",
+        "V16",
+        "V17",
+        "V18",
+        "V19",
+        "V20",
+        "V21",
+        "V22",
+        "V23",
+        "V24",
+        "V25",
+        "V26",
+        "V27",
+        "V28",
+        "Amount"
+    ],
+    "training_dataset": {
+        "name": "ULB Credit Card Fraud Dataset",
+        "training_rows": 199364,
+        "test_rows": 85443,
+        "feature_count": 30
+    },
+    "target": {
+        "column": "Class",
+        "used_during_training": false,
+        "purpose": "Evaluation only"
+    }
+}

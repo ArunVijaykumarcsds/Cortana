@@ -1,0 +1,9 @@
+{
+    "model_name": "CORTANA Model 1",
+    "model_type": "RandomForestClassifier",
+    "dataset": "PaySim",
+    "purpose": "Supervised fraud probability",
+    "artifact_format": "joblib",
+    "validation_rows": 141815,
+    "test_rows": 177268
+}
