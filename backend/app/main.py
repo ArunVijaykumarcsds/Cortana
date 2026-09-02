@@ -13,6 +13,8 @@ from fastapi.responses import JSONResponse
 
 from backend.app.api.deps import get_inference_engine
 from backend.app.api.v1.router import api_v1_router
+from backend.app.middleware.request_size import RequestSizeLimitMiddleware
+from backend.app.middleware.logging_middleware import LoggingMiddleware
 from backend.app.db.database import create_all_tables
 
 
@@ -23,7 +25,7 @@ DEFAULT_ORIGINS = [
     "http://127.0.0.1:5173",
     "http://127.0.0.1:3000",
 ]
-env_origins = os.getenv("CORTANA_CORS_ORIGINS")
+env_origins = os.getenv("CORS_ORIGINS")
 if env_origins:
     CORS_ORIGINS: List[str] = [o.strip() for o in env_origins.split(",") if o.strip()]
 else:
@@ -36,8 +38,9 @@ async def lifespan(app: FastAPI):
     Application lifecycle management.
     Initializes database tables and warms up the ML inference engine on startup.
     """
-    # 1. Initialize DB tables if they don't exist
-    create_all_tables()
+    # 1. Initialize DB tables if they don't exist (only in non-production)
+    if os.getenv("ENV", "development") != "production":
+        create_all_tables()
 
     # 2. Warm up ML inference engine
     _ = get_inference_engine()
@@ -53,8 +56,8 @@ app = FastAPI(
         "separation between PaySim and ULB transactions."
     ),
     version="1.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc",
+    docs_url="/docs" if os.getenv("ENV") != "production" else None,
+    redoc_url="/redoc" if os.getenv("ENV") != "production" else None,
     openapi_url="/openapi.json",
     lifespan=lifespan,
 )
@@ -108,6 +111,10 @@ async def generic_exception_handler(request: Request, exc: Exception):
         },
     )
 
+
+# Register middlewares
+app.add_middleware(LoggingMiddleware)
+app.add_middleware(RequestSizeLimitMiddleware)
 
 # Mount v1 router at /api/v1
 app.include_router(api_v1_router, prefix="/api")

@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 from backend.app.api.deps import get_db
 from backend.app.db.models import InvestigationModel
 from backend.app.db.repositories.investigation_repo import InvestigationRepository
+from backend.app.security import get_api_key
 from backend.app.schemas.api import (
     AuditEventResponse,
     InvestigationEventCreate,
@@ -103,6 +104,7 @@ def append_audit_event(
     investigation_id: str,
     payload: InvestigationEventCreate,
     db: Session = Depends(get_db),
+    api_key: str = Depends(get_api_key),
 ):
     """
     Appends an immutable audit event to the investigation's audit trail.
@@ -137,6 +139,7 @@ def update_investigation(
     investigation_id: str,
     payload: InvestigationUpdate,
     db: Session = Depends(get_db),
+    api_key: str = Depends(get_api_key),
 ):
     repo = InvestigationRepository(db)
     inv = repo.get_by_id(investigation_id)

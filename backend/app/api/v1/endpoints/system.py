@@ -75,13 +75,30 @@ def get_system_status(
         ),
     ]
 
-    return SystemStatusResponse(
+    # Determine overall health of critical services
+    critical_services = [
+        services[0],  # Model 1
+        services[1],  # Model 2
+        services[2],  # Rules Engine
+        services[3],  # Fusion Engine
+        services[4],  # Calibration Engine
+        services[5],  # Database Persistence
+    ]
+    all_operational = all(s.state == "OPERATIONAL" for s in critical_services)
+
+    response_body = SystemStatusResponse(
         services=services,
         model_version="CORTANA_FINAL_v1.0.0",
         release_phase="Phase 6 — Final",
         package_status="Smoke-tested, artifact-reproducible",
         locked_threshold=0.98,
     )
+    if all_operational:
+        return response_body
+    else:
+        from fastapi.responses import JSONResponse
+        from fastapi import status as http_status
+        return JSONResponse(status_code=http_status.HTTP_503_SERVICE_UNAVAILABLE, content=response_body.dict())
 
 
 @router.get(

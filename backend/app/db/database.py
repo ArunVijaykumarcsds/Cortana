@@ -11,7 +11,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker, Session
 
 # Configurable database URL. Defaults to SQLite for local development/testing.
 # For production PostgreSQL: postgresql+psycopg2://user:password@host:port/dbname
-DATABASE_URL = os.getenv("CORTANA_DATABASE_URL", "sqlite:///./cortana_dev.db")
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./cortana_dev.db")
 
 # SQLite connection args for threading support
 connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}

@@ -25,13 +25,23 @@ from backend.app.schemas.transaction import (
 )
 
 
+class HealthComponentStatus(BaseModel):
+    database: Literal["ok", "degraded"]
+    model1: Literal["ok", "degraded"]
+    model2: Literal["ok", "degraded"]
+    rules: Literal["ok", "degraded"]
+    fusion: Literal["ok", "degraded"]
+    calibration: Literal["ok", "degraded"]
+    llm_provider: Literal["ok", "degraded"]
+
+
 class HealthResponse(BaseModel):
     status: Literal["healthy", "degraded", "unhealthy"] = "healthy"
     database: Literal["connected", "disconnected", "error"] = "connected"
     ml_engine: Literal["operational", "error"] = "operational"
+    details: HealthComponentStatus
     version: str = "1.0.0"
     timestamp: datetime = Field(default_factory=datetime.utcnow)
-
 
 class AlertStatusUpdate(BaseModel):
     status: Literal["OPEN", "UNDER_REVIEW", "RESOLVED"] = Field(..., description="Target alert status")

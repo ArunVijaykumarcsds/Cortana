@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 from backend.app.api.deps import get_db
 from backend.app.db.models import AlertModel
 from backend.app.db.repositories.alert_repo import AlertRepository
+from backend.app.security import get_api_key
 from backend.app.schemas.api import AlertResponse, AlertStatusUpdate
 
 router = APIRouter()
@@ -76,6 +77,7 @@ def update_alert_status(
     alert_id: str,
     payload: AlertStatusUpdate,
     db: Session = Depends(get_db),
+    api_key: str = Depends(get_api_key),
 ):
     repo = AlertRepository(db)
     alert = repo.get_by_id(alert_id)
