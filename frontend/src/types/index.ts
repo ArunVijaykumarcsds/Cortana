@@ -146,3 +146,15 @@ export interface SystemStatus {
   state: ServiceState;
   detail: string;
 }
+
+export interface ExplanationResponse {
+  transaction_id: string;
+  risk_level: RiskLevel;
+  decision: Decision;
+  fused_risk_score: number;
+  explanation_text: string;
+  referenced_signals: string[];
+  provider: "deterministic_fallback" | "gemini" | "openai" | "custom_llm";
+  is_fallback: boolean;
+}
+

@@ -1,43 +1,155 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, CheckCircle2, XCircle, ArrowUpCircle, StickyNote } from "lucide-react";
-import { getInvestigationById } from "../data/mock/investigations";
+import {
+  appendInvestigationEvent,
+  fetchInvestigationById,
+  updateInvestigation,
+} from "../data/api";
+import type { Investigation } from "../types";
 import RiskBadge from "../components/RiskBadge";
 import DecisionPill from "../components/DecisionPill";
 import AuditTimeline from "../components/AuditTimeline";
-import type { AuditEvent } from "../types";
 import { formatTimestamp, pct } from "../utils/risk";
 
 export default function InvestigationDetail() {
   const { id } = useParams();
-  const investigation = id ? getInvestigationById(id) : undefined;
-  const [events, setEvents] = useState<AuditEvent[]>(investigation?.audit_trail ?? []);
+  const [investigation, setInvestigation] = useState<Investigation | null | undefined>(undefined);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [actionLoading, setActionLoading] = useState(false);
   const [note, setNote] = useState("");
-  const [resolution, setResolution] = useState<string | null>(investigation?.resolution ?? null);
+
+  useEffect(() => {
+    let mounted = true;
+    async function load() {
+      if (!id) {
+        setInvestigation(null);
+        setLoading(false);
+        return;
+      }
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await fetchInvestigationById(id);
+        if (mounted) setInvestigation(data || null);
+      } catch (err: unknown) {
+        if (mounted) {
+          const msg = err instanceof Error ? err.message : "Failed to load investigation";
+          setError(msg);
+        }
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    }
+    load();
+    return () => {
+      mounted = false;
+    };
+  }, [id]);
+
+  async function handleConfirmFraud() {
+    if (!id || actionLoading) return;
+    try {
+      setActionLoading(true);
+      const updated = await updateInvestigation(id, {
+        resolution: "FRAUD_CONFIRMED",
+        actor: investigation?.assigned_to || "Analyst",
+        note: note.trim() || "Confirmed as fraudulent by analyst review.",
+      });
+      setInvestigation(updated);
+      setNote("");
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : "Failed to confirm fraud");
+    } finally {
+      setActionLoading(false);
+    }
+  }
+
+  async function handleMarkLegitimate() {
+    if (!id || actionLoading) return;
+    try {
+      setActionLoading(true);
+      const updated = await updateInvestigation(id, {
+        resolution: "LEGITIMATE",
+        actor: investigation?.assigned_to || "Analyst",
+        note: note.trim() || "Reviewed and marked legitimate.",
+      });
+      setInvestigation(updated);
+      setNote("");
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : "Failed to mark legitimate");
+    } finally {
+      setActionLoading(false);
+    }
+  }
+
+  async function handleEscalate() {
+    if (!id || actionLoading) return;
+    try {
+      setActionLoading(true);
+      const updated = await updateInvestigation(id, {
+        status: "ESCALATED",
+        actor: investigation?.assigned_to || "Analyst",
+        note: note.trim() || "Escalated for senior analyst review.",
+      });
+      setInvestigation(updated);
+      setNote("");
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : "Failed to escalate case");
+    } finally {
+      setActionLoading(false);
+    }
+  }
+
+  async function handleAddNote() {
+    if (!id || !note.trim() || actionLoading) return;
+    try {
+      setActionLoading(true);
+      const updated = await appendInvestigationEvent(id, {
+        action: "NOTE_ADDED",
+        actor: investigation?.assigned_to || "Analyst",
+        note: note.trim(),
+      });
+      setInvestigation(updated);
+      setNote("");
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : "Failed to add note");
+    } finally {
+      setActionLoading(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[300px] items-center justify-center">
+        <span className="label-eyebrow animate-pulse">Loading Case File…</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="px-5 py-10 md:px-8">
+        <div className="panel border-ruby/40 p-6 text-center">
+          <p className="text-sm text-ruby">Error: {error}</p>
+          <Link to="/app/investigations" className="mt-4 inline-block text-sm text-intel hover:underline">
+            Back to investigations
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   if (!investigation) {
     return (
       <div className="px-5 py-10 md:px-8">
-        <p className="text-sm text-mute">Case not found in the mock dataset.</p>
+        <p className="text-sm text-mute">Case '{id}' not found.</p>
         <Link to="/app/investigations" className="mt-3 inline-block text-sm text-intel hover:underline">
           Back to investigations
         </Link>
       </div>
     );
-  }
-
-  function log(action: AuditEvent["action"], resolutionLabel?: string, noteText?: string) {
-    setEvents((prev) => [
-      ...prev,
-      {
-        id: `e-${prev.length + 1}`,
-        action,
-        actor: investigation!.assigned_to ?? "Analyst",
-        timestamp: new Date().toISOString(),
-        note: noteText,
-      },
-    ]);
-    if (resolutionLabel) setResolution(resolutionLabel);
   }
 
   return (
@@ -84,15 +196,15 @@ export default function InvestigationDetail() {
               </div>
             </div>
 
-            {resolution && (
+            {investigation.resolution && (
               <div
                 className={`mt-4 rounded-md border px-4 py-2.5 text-sm ${
-                  resolution === "FRAUD_CONFIRMED"
+                  investigation.resolution === "FRAUD_CONFIRMED"
                     ? "border-(--color-critical)/40 text-(--color-critical)"
                     : "border-(--color-low)/40 text-(--color-low)"
                 }`}
               >
-                Resolved: {resolution === "FRAUD_CONFIRMED" ? "Fraud confirmed" : "Marked legitimate"}
+                Resolved: {investigation.resolution === "FRAUD_CONFIRMED" ? "Fraud confirmed" : "Marked legitimate"}
               </div>
             )}
           </div>
@@ -102,33 +214,37 @@ export default function InvestigationDetail() {
             <p className="label-eyebrow mb-4">Analyst actions</p>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               <button
-                onClick={() => log("CONFIRMED_FRAUD", "FRAUD_CONFIRMED", "Confirmed as fraudulent by analyst review.")}
-                className="flex flex-col items-center gap-2 rounded-md border border-hairline px-3 py-4 text-xs text-ivory-dim transition-colors hover:border-(--color-critical)/60 hover:text-ivory"
+                type="button"
+                disabled={actionLoading}
+                onClick={handleConfirmFraud}
+                className="flex flex-col items-center gap-2 rounded-md border border-hairline px-3 py-4 text-xs text-ivory-dim transition-colors hover:border-(--color-critical)/60 hover:text-ivory disabled:opacity-50"
               >
                 <XCircle className="h-5 w-5 text-(--color-critical)" aria-hidden="true" />
                 Confirm fraud
               </button>
               <button
-                onClick={() => log("MARKED_LEGITIMATE", "LEGITIMATE", "Reviewed and marked legitimate.")}
-                className="flex flex-col items-center gap-2 rounded-md border border-hairline px-3 py-4 text-xs text-ivory-dim transition-colors hover:border-(--color-low)/60 hover:text-ivory"
+                type="button"
+                disabled={actionLoading}
+                onClick={handleMarkLegitimate}
+                className="flex flex-col items-center gap-2 rounded-md border border-hairline px-3 py-4 text-xs text-ivory-dim transition-colors hover:border-(--color-low)/60 hover:text-ivory disabled:opacity-50"
               >
                 <CheckCircle2 className="h-5 w-5 text-(--color-low)" aria-hidden="true" />
                 Mark legitimate
               </button>
               <button
-                onClick={() => log("ESCALATED", undefined, "Escalated for senior analyst review.")}
-                className="flex flex-col items-center gap-2 rounded-md border border-hairline px-3 py-4 text-xs text-ivory-dim transition-colors hover:border-amber/60 hover:text-ivory"
+                type="button"
+                disabled={actionLoading}
+                onClick={handleEscalate}
+                className="flex flex-col items-center gap-2 rounded-md border border-hairline px-3 py-4 text-xs text-ivory-dim transition-colors hover:border-amber/60 hover:text-ivory disabled:opacity-50"
               >
                 <ArrowUpCircle className="h-5 w-5 text-amber" aria-hidden="true" />
                 Escalate
               </button>
               <button
-                onClick={() => {
-                  if (!note.trim()) return;
-                  log("NOTE_ADDED", undefined, note.trim());
-                  setNote("");
-                }}
-                className="flex flex-col items-center gap-2 rounded-md border border-hairline px-3 py-4 text-xs text-ivory-dim transition-colors hover:border-intel/60 hover:text-ivory"
+                type="button"
+                disabled={actionLoading || !note.trim()}
+                onClick={handleAddNote}
+                className="flex flex-col items-center gap-2 rounded-md border border-hairline px-3 py-4 text-xs text-ivory-dim transition-colors hover:border-intel/60 hover:text-ivory disabled:opacity-50"
               >
                 <StickyNote className="h-5 w-5 text-intel" aria-hidden="true" />
                 Add note
@@ -147,7 +263,7 @@ export default function InvestigationDetail() {
         <div>
           <div className="panel p-5">
             <p className="label-eyebrow mb-4">Audit trail</p>
-            <AuditTimeline events={events} />
+            <AuditTimeline events={investigation.audit_trail || []} />
           </div>
         </div>
       </div>

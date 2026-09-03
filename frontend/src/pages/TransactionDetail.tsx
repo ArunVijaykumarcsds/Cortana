@@ -1,6 +1,8 @@
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, ShieldAlert, ListChecks, Radar } from "lucide-react";
-import { getTransactionById } from "../data/mock/generator";
+import { fetchTransactionById } from "../data/api";
+import type { Transaction } from "../types";
 import RiskBadge from "../components/RiskBadge";
 import DecisionPill from "../components/DecisionPill";
 import RiskScore from "../components/RiskScore";
@@ -19,12 +21,63 @@ const RULE_LABEL: Record<string, string> = {
 
 export default function TransactionDetail() {
   const { id } = useParams();
-  const tx = id ? getTransactionById(id) : undefined;
+  const [tx, setTx] = useState<Transaction | null | undefined>(undefined);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    async function load() {
+      if (!id) {
+        setTx(null);
+        setLoading(false);
+        return;
+      }
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await fetchTransactionById(id);
+        if (mounted) setTx(data || null);
+      } catch (err: unknown) {
+        if (mounted) {
+          const msg = err instanceof Error ? err.message : "Failed to load transaction";
+          setError(msg);
+        }
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    }
+    load();
+    return () => {
+      mounted = false;
+    };
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[300px] items-center justify-center">
+        <span className="label-eyebrow animate-pulse">Loading Transaction Details…</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="px-5 py-10 md:px-8">
+        <div className="panel border-ruby/40 p-6 text-center">
+          <p className="text-sm text-ruby">Error: {error}</p>
+          <Link to="/app/transactions" className="mt-4 inline-block text-sm text-intel hover:underline">
+            Back to transactions
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   if (!tx) {
     return (
       <div className="px-5 py-10 md:px-8">
-        <p className="text-sm text-mute">Transaction not found in the mock dataset.</p>
+        <p className="text-sm text-mute">Transaction '{id}' not found.</p>
         <Link to="/app/transactions" className="mt-3 inline-block text-sm text-intel hover:underline">
           Back to transactions
         </Link>
@@ -70,11 +123,11 @@ export default function TransactionDetail() {
               </div>
               <div>
                 <dt className="text-[11px] text-mute">Origin account</dt>
-                <dd className="data-num mt-0.5 text-sm text-ivory">{tx.origin_account}</dd>
+                <dd className="data-num mt-0.5 text-sm text-ivory">{tx.origin_account || "—"}</dd>
               </div>
               <div>
                 <dt className="text-[11px] text-mute">Destination account</dt>
-                <dd className="data-num mt-0.5 text-sm text-ivory">{tx.destination_account}</dd>
+                <dd className="data-num mt-0.5 text-sm text-ivory">{tx.destination_account || "—"}</dd>
               </div>
               <div>
                 <dt className="text-[11px] text-mute">Timestamp</dt>
